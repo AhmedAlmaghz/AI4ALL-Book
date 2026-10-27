@@ -747,34 +747,22 @@ def main() -> int:
     }
     render_preview_pages(pdf_path, preview_pages)
 
-    target_pages = book.get("target_pages", "450-480")
-    report = f'''# تقرير تصدير نسخة القراءة
+    target_pages = book.get("target_pages", "540-580")
+    font_count = len(list(FONTS.glob("*.ttf")))
+    figure_count = len(list(ASSETS.glob("fig-*.svg")))
+    summary = f'''# ملخص التصدير (مولّد آليًا)
 
-- الحالة: اكتمل إنشاء حزمة مراجعة تجميعية، وليست طبعة نشر معتمدة.
 - المدخل: {len(rows)} فصلًا من 7 أجزاء.
-- كلمات متن الفصول بعد استبعاد ملاحظات المؤلف: {total_words:,}.
-- PDF: {page_count} صفحة، مقاس {page_size[0]} × {page_size[1]} سم، مع فهرس داخلي وإشارات مرجعية للفصول.
-- هدف التخطيط في بيانات المشروع: {target_pages} صفحة؛ يُسجّل هذا التصدير عدد الصفحات الفعلي، ويستلزم اختلافه ضبطًا تحريريًا وتصميميًا قبل الاعتماد.
-- EPUB: حزمة EPUB 3 قابلة لإعادة التدفق، اتجاه القراءة من اليمين إلى اليسار، {epub_chapters} فصلًا في التنقل، و{epub_images} رسوم SVG مضمنة.
-- HTML: نسخة قراءة واحدة ذات فهرس وروابط داخلية.
-- الرسوم: أُدرجت الرسوم المتاحة في `assets/figures` في مواضع عناوينها؛ لا تُنشئ عملية التصدير الرسوم التي لا يوجد لها ملف.
-- المراجعة البصرية: صفحات معاينة للغلاف والفهرس والفصول 5 و17 و34 في `dist/preview/`.
-- بيانات المؤلف والناشر والرقم الدولي، ومراجعة اللغة والحقائق والإتاحة واختبار القراء والبروفة الورقية: لم تعتمد بعد.
-- PDF للقراءة والمراجعة فقط؛ لا يحمل اعتماد PDF/X-4 أو بروفـة مطبعية.
+- كلمات المتن بعد استبعاد ملاحظات المؤلف: {total_words:,}.
+- PDF: {page_count} صفحة، مقاس {page_size[0]} × {page_size[1]} سم.
+- هدف التخطيط في `book.yaml`: {target_pages} صفحة.
+- EPUB: {epub_chapters} فصلًا في التنقل، و{epub_images} رسم SVG، و{font_count} خطًا مضمّنًا.
+- الأشكال المتاحة في `assets/figures`: {figure_count}.
+- صفحات المعاينة: الغلاف، الفهرس، الفصول 5 و17 و34 في `dist/preview/`.
 
-## الملفات
-
-- `dist/book-full-draft.pdf`
-- `dist/book-full-draft.epub`
-- `dist/book-full-draft.html`
-- `dist/book.css`
-
-## إعادة البناء
-
-من جذر المشروع شغّل: `python scripts/export-book.py`.
-يتطلب Python packages: `Markdown`, `lxml`, و`PyMuPDF`، إضافة إلى Chrome أو Edge لإنتاج PDF.
+هذا ملخص آلي؛ التقرير البشري المفصل في `docs/export-report.md`.
 '''
-    (ROOT / "docs" / "export-report.md").write_text(report, encoding="utf-8")
+    (DIST / "export-summary.md").write_text(summary, encoding="utf-8")
 
     print(f"Chapters: {len(rows)} (EPUB navigation verified: {epub_chapters})")
     print(f"Chapter words: {total_words:,}")
