@@ -241,7 +241,9 @@ for ch in sorted(chapter_counts):
         domain, priority, action, owner = C[i]
         claim = r["claim"].replace("|", "\\|")
         source = r["source_title"].replace("|", "\\|")
-        note = r["notes"].replace("|", "\\|")
+        # The P1 review pack is the canonical place for the added caveat. Keep
+        # the generated table focused on why the claim is still partial.
+        note = r["notes"].split(" | [P1-0.24]", 1)[0].replace("|", "\\|")
         lines.append(f"| `{i}` | {claim} | {source} | {note} | {domain} / **{priority}** | {action} **({owner})** |")
     lines.append("")
 lines.append("## 6. بروتوكول الإغلاق")
