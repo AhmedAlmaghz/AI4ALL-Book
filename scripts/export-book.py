@@ -531,13 +531,22 @@ def build_epub(book: dict[str, str], rows: list[dict[str, str]], out_path: Path,
         )
         now = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
         opf = f'''<?xml version="1.0" encoding="UTF-8"?>
-<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" xml:lang="ar" prefix="dcterms: http://purl.org/dc/terms/ rendition: http://www.idpf.org/vocab/rendition/#">
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" xml:lang="ar" prefix="dcterms: http://purl.org/dc/terms/ rendition: http://www.idpf.org/vocab/rendition/# schema: http://schema.org/">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:identifier id="book-id">urn:uuid:8d477e6d-3b38-4fd6-9c68-34d83d2e0e01</dc:identifier>
     <dc:title>{esc(title_text)}</dc:title><dc:language>ar</dc:language>
     <dc:subject>الذكاء الاصطناعي؛ مهارات عملية؛ تعلم ذاتي</dc:subject>
     <dc:description>نسخة قراءة تجميعية لمسودة من 34 فصلًا، غير معتمدة للنشر.</dc:description>
     <meta property="dcterms:modified">{now}</meta>
+    <meta property="schema:accessMode">textual</meta>
+    <meta property="schema:accessMode">visual</meta>
+    <meta property="schema:accessModeSufficient">textual,visual</meta>
+    <meta property="schema:accessibilityFeature">alternativeText</meta>
+    <meta property="schema:accessibilityFeature">structuralNavigation</meta>
+    <meta property="schema:accessibilityFeature">tableOfContents</meta>
+    <meta property="schema:accessibilityFeature">readingOrder</meta>
+    <meta property="schema:accessibilityHazard">unknown</meta>
+    <meta property="schema:accessibilitySummary">النص الكامل متاح مع 67 نصًا بديلًا للرسوم وبنية تنقل؛ لم يُختبر بعد بقارئ شاشة، ولا يُدّعى امتثال كامل لـEPUB Accessibility 1.1.</meta>
     <meta property="rendition:layout">reflowable</meta><meta property="rendition:orientation">auto</meta>
     <meta property="rendition:spread">auto</meta>
   </metadata>
@@ -581,7 +590,7 @@ def set_pdf_metadata_and_bookmarks(pdf_path: Path, rows: list[dict[str, str]], b
         "title": book.get("title", "من الصفر إلى الاحتراف") + " — نسخة قراءة تجميعية",
         "author": "",
         "subject": "مسودة مراجعة؛ ليست طبعة نشر معتمدة",
-        "keywords": "الذكاء الاصطناعي، تعلم، نسخة مراجعة، EPUB 3",
+        "keywords": "الذكاء الاصطناعي، مهارات عملية، تعلم ذاتي، نسخة مراجعة",
         "creator": "scripts/export-book.py",
     })
     doc.set_metadata(metadata)
@@ -738,6 +747,18 @@ def main() -> int:
     with pymupdf.open(pdf_path) as doc:
         if len(doc.get_toc()) < 41:
             raise ValueError(f"PDF outline includes only {len(doc.get_toc())} entries; expected 41.")
+        catalog = doc.pdf_catalog()
+        if doc.xref_get_key(catalog, "Lang") != ("string", "ar"):
+            raise ValueError("PDF catalog language is missing or not Arabic.")
+        if doc.xref_get_key(catalog, "StructTreeRoot")[0] == "null":
+            raise ValueError("PDF has no structure tree; a tagged PDF is expected.")
+        alt_texts = sum(
+            1
+            for xref in range(1, doc.xref_length())
+            if "/Alt" in doc.xref_object(xref, compressed=True)
+        )
+        if alt_texts < image_count:
+            raise ValueError(f"PDF has {alt_texts} alt texts; expected at least {image_count}.")
     preview_pages = {
         "cover": 1,
         "contents": 4,

@@ -186,6 +186,8 @@
 - نسخة رقمية بتباعد أكبر.
 - EPUB قابل للتنقل.
 - لغة الصفحة `lang="ar"` واتجاه `dir="rtl"`.
+- بيانات إتاحة Schema.org في حزمة EPUB (`accessMode`، و`accessibilityFeature`، و`accessibilitySummary`).
+- بنية PDF موسومة (`StructTreeRoot`) مع نص بديل لكل شكل؛ تدقيق PDF/UA مطلوب قبل الاعتماد.
 
 ## 13. الطباعة والتصدير
 
