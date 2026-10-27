@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Generated export artifacts (rebuild with scripts/export-book.py)
+dist/
+
+# Temporary QA and preview files
+assets/figures/_*
+assets/figures/__*
+*.tmp
+*.log
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
