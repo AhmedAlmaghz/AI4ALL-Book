@@ -1,0 +1,26 @@
+{
+  "schema": "maghzbook.distribution",
+  "version": 1,
+  "generatedAt": "2026-11-16T20:09:24+00:00",
+  "slug": "ai-for-everyone-skills",
+  "book": "من الصفر إلى الاحتراف",
+  "chapters": 34,
+  "codeFragments": 0,
+  "files": [
+    {
+      "path": "ai-for-everyone-skills.pdf",
+      "bytes": 13670753,
+      "sha256": "d2c96de54d7e6b24fe9f3148a64c2d1ef81d8a5b6f17261e92fa034a9945c441"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 578,
+      "sha256": "ee1764c1c2a58e2a719ccaded8a3caec5926a30d0040d5029b51d509b84d864b"
+    },
+    {
+      "path": "README.md",
+      "bytes": 936,
+      "sha256": "d57b593cf92eab1802a1e12a94efaf5f624075c824d6587ac73acf843b8e799c"
+    }
+  ]
+}
